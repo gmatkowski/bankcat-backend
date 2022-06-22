@@ -11,6 +11,7 @@ use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
 /**
+ * @property string id
  * @property string name
  * @property int amount
  * @property User user

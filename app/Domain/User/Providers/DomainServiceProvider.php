@@ -12,6 +12,7 @@ use App\Application\Repositories\PermissionRepository;
 use App\Application\Repositories\RoleRepository;
 use App\Application\Repositories\UserRepository;
 use App\Domain\User\Console\Commands\UserCreateCommand;
+use App\Domain\User\Projectors\ExpenseProjector;
 use App\Domain\User\Projectors\RoleProjector;
 use App\Domain\User\Projectors\UserProjector;
 use App\Domain\User\Repositories\ExpenseRepositoryEloquent;
@@ -49,7 +50,8 @@ class DomainServiceProvider extends BaseDomainServiceProvider
      */
     protected array $projectors = [
         RoleProjector::class,
-        UserProjector::class
+        UserProjector::class,
+        ExpenseProjector::class
     ];
 
     protected array $commands = [
