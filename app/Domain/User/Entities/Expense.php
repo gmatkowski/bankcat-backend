@@ -2,6 +2,7 @@
 
 namespace App\Domain\User\Entities;
 
+use App\Domain\Bank\Entities\Bank;
 use App\Domain\Category\Entities\Category;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,9 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property int amount
  * @property User user
  * @property Category category
+ * @property Bank bank
+ * @property array|null data
+ * @property Carbon date_at;
  * @property Carbon created_at
  * @property Carbon updated_at
  */
@@ -30,7 +34,15 @@ class Expense extends Model implements Transformable
      */
     protected $fillable = [
         'name',
-        'amount'
+        'amount',
+        'data'
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'data' => 'array'
     ];
 
     /**
@@ -47,6 +59,14 @@ class Expense extends Model implements Transformable
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function bank(): BelongsTo
+    {
+        return $this->belongsTo(Bank::class);
     }
 
 }

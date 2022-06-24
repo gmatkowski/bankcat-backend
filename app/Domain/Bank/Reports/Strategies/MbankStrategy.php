@@ -7,13 +7,16 @@
 
 namespace App\Domain\Bank\Reports\Strategies;
 
+use App\Domain\Bank\Reports\Dto\TransactionDto;
 use App\Domain\Bank\Reports\Contracts\ReportDecoderContract;
 use App\Domain\Bank\Reports\Contracts\ReportStrategyContract;
 use App\Domain\Bank\Reports\Decoders\Mbank\CsvDecoder;
 use App\Domain\Bank\Reports\Decoders\Mbank\JsonDecoder;
+use App\Domain\Bank\Reports\TransactionList;
 use App\Domain\Bank\Reports\Exceptions\ReportDecoderException;
-use Illuminate\Support\Facades\Validator;
-use NumberFormatter;
+use App\Domain\Bank\Reports\ReportService;
+use App\Domain\Bank\Reports\TransactionValidator;
+use Carbon\Carbon;
 
 /**
  *
@@ -48,77 +51,64 @@ class MbankStrategy implements ReportStrategyContract
     }
 
     /**
-     * @param array $data
      * @return array
      */
-    public function getCategories(array $data): array
+    public function getAvailableDecoders(): array
     {
-        $transactions = $this->getTransactions($data);
+        return array_keys($this->decoders);
+    }
 
+    /**
+     * @param TransactionList $transactions
+     * @return array
+     */
+    public function getCategories(TransactionList $transactions): array
+    {
         return array_values(
             array_unique(
                 array_map(
-                    static fn(array $data): string => $data['category'],
-                    array_filter($transactions, fn(array $transaction): bool => $this->isValidReportData($transaction) && $this->isSpending($transaction))
+                    static fn(TransactionDto $d): string => $d->getCategory(),
+                    $transactions->getTransactions()
                 )
             )
         );
     }
 
     /**
-     * @param array $transaction
-     * @return bool
+     * @param array $data
+     * @return TransactionList
      */
-    protected function isSpending(array $transaction): bool
+    public function getTransactions(array $data): TransactionList
     {
-        $numberFormatter = new NumberFormatter('pl_PL', NumberFormatter::DECIMAL);
-        $number = $numberFormatter->parse($transaction['amount']);
-
-        return $number < 0;
-    }
-
-    /**
-     * @param array $transactions
-     * @return array
-     */
-    protected function getTransactions(array $transactions): array
-    {
-        if ($this->isReportWithHeader($transactions)) {
-            array_shift($transactions);
+        if ($this->isReportWithHeader($data)) {
+            array_shift($data);
         }
 
-        return $transactions;
-    }
+        $validator = new TransactionValidator();
 
-    /**
-     * @param array $transaction
-     * @return bool
-     */
-    private function isValidReportData(array $transaction): bool
-    {
-        $validator = Validator::make($transaction, [
-            'date' => [
-                'required',
-            ],
-            'description' => [
-                'required',
-            ],
-            'category' => [
-                'required',
-            ],
-            'amount' => [
-                'required',
-            ]
-        ]);
+        $transactions = array_filter(
+            $data,
+            static fn(array $transaction): bool => $validator->validate($transaction)
+        );
 
-        return !$validator->fails();
+        $dto = new TransactionList();
+        foreach ($transactions as $transaction) {
+            $dto->addTransaction(new TransactionDto(
+                $transaction['description'],
+                ReportService::parseAmount($transaction['amount']),
+                $transaction['category'],
+                Carbon::parse($transaction['date'])
+            ));
+        }
+
+        return $dto;
     }
 
     /**
      * @param array $data
      * @return bool
      */
-    private function isReportWithHeader(array $data): bool
+    protected function isReportWithHeader(array $data): bool
     {
         return ($data[0]['date'] ?? '') === '#Data operacji';
     }

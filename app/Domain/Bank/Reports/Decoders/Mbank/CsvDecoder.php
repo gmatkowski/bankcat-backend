@@ -53,10 +53,10 @@ class CsvDecoder implements ReportDecoderContract
      */
     protected function mapRecord(array $record): array
     {
+
         return [
             'date' => $record[0] ?? null,
             'description' => $record[1] ?? null,
-            'account' => $record[2] ?? null,
             'category' => $record[3] ?? null,
             'amount' => $record[4] ?? null,
         ];
@@ -74,9 +74,6 @@ class CsvDecoder implements ReportDecoderContract
                 'date'
             ],
             'description' => [
-                'required'
-            ],
-            'account' => [
                 'required'
             ],
             'category' => [

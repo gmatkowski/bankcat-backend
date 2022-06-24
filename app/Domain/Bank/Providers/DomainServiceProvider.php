@@ -34,10 +34,23 @@ class DomainServiceProvider extends BaseDomainServiceProvider
         BankRepository::class => BankRepositoryEloquent::class
     ];
 
+    /**
+     * @var array|string[]
+     */
+    protected array $providers = [
+        RouteServiceProvider::class
+    ];
+
+    /**
+     * @var array|string[]
+     */
     protected array $projectors = [
         BankProjector::class
     ];
 
+    /**
+     * @var array|string[]
+     */
     protected array $commands = [
         ImportCategoryCouplingsCommand::class
     ];

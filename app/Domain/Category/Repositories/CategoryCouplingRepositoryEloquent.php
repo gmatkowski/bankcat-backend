@@ -2,6 +2,7 @@
 
 namespace App\Domain\Category\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Prettus\Repository\Eloquent\BaseRepository;
 use App\Application\Repositories\CategoryCouplingRepository;
 use App\Domain\Category\Entities\CategoryCoupling;
@@ -31,5 +32,14 @@ class CategoryCouplingRepositoryEloquent extends BaseRepository implements Categ
     public function findByName(string $name): ?CategoryCoupling
     {
         return $this->findByField('name', $name)->first();
+    }
+
+    /**
+     * @param array $names
+     * @return Collection
+     */
+    public function findByNames(array $names): Collection
+    {
+        return $this->findWhereIn('name', $names);
     }
 }

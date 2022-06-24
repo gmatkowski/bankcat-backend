@@ -7,6 +7,8 @@
 
 namespace App\Domain\Bank\Reports\Contracts;
 
+use App\Domain\Bank\Reports\TransactionList;
+
 /**
  *
  */
@@ -20,8 +22,19 @@ interface ReportStrategyContract
     public function decode(string $data,  string $format): array;
 
     /**
-     * @param array $data
      * @return array
      */
-    public function getCategories(array $data): array;
+    public function getAvailableDecoders(): array;
+
+    /**
+     * @param array $data
+     * @return TransactionList
+     */
+    public function getTransactions(array $data): TransactionList;
+
+    /**
+     * @param TransactionList $transactions
+     * @return array
+     */
+    public function getCategories(TransactionList $transactions): array;
 }

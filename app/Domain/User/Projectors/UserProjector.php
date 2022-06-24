@@ -7,6 +7,7 @@
 
 namespace App\Domain\User\Projectors;
 
+use App\Application\Events\User\UserUpdated;
 use App\Application\Repositories\RoleRepository;
 use App\Application\Repositories\UserRepository;
 use App\Domain\User\Entities\User;
@@ -14,6 +15,7 @@ use App\Application\Events\User\UserCreated;
 use App\Application\Events\User\UserRoleChanged;
 use App\Application\Events\User\UserVerified;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 use function event;
 
@@ -44,6 +46,7 @@ class UserProjector extends Projector
             $user->password = $event->getDto()->getPassword();
             $user->first_name = $event->getDto()->getFirstName();
             $user->last_name = $event->getDto()->getLastName();
+            $user->verification_token = Str::random(64);
             $user->save();
 
             $roleId = $event->getDto()->getRoleId();
@@ -59,6 +62,25 @@ class UserProjector extends Projector
                 );
             }
         });
+    }
+
+    /**
+     * @param UserUpdated $event
+     */
+    public function onUserUpdated(UserUpdated $event): void
+    {
+        /**
+         * @var User $user
+         */
+        if (!$user = $this->userRepository->find($event->getDto()->getUserId())) {
+            return;
+        }
+
+        $user->fill([
+            'first_name' => $event->getDto()->getFirstName(),
+            'last_name' => $event->getDto()->getLastName()
+        ]);
+        $user->save();
     }
 
     /**
@@ -86,6 +108,7 @@ class UserProjector extends Projector
             return;
         }
 
+        $user->verification_token = null;
         $user->markEmailAsVerified();
     }
 

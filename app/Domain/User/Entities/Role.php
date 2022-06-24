@@ -19,6 +19,7 @@ class Role extends BaseRole implements Transformable
     use TransformableTrait;
 
     public const DEFAULT_ROLE = 'user';
+    public const AMIN_ROLE = 'admin';
 
     /**
      * The attributes that are mass assignable.

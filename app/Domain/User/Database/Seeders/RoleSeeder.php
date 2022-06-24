@@ -11,6 +11,7 @@ use App\Application\Repositories\RoleRepository;
 use App\Application\Aggregations\Role\RoleAggregate;
 use App\Application\Dto\Role\RoleDto;
 use App\Application\Events\Role\RoleCreated;
+use App\Domain\User\Entities\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -23,8 +24,8 @@ class RoleSeeder extends Seeder
      * @var array|string[]
      */
     protected array $roles = [
-        'user',
-        'admin'
+        Role::DEFAULT_ROLE,
+        Role::AMIN_ROLE
     ];
     /**
      * @var RoleRepository

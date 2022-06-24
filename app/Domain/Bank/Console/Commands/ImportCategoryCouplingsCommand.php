@@ -7,14 +7,18 @@
 
 namespace App\Domain\Bank\Console\Commands;
 
+use App\Application\Aggregations\Category\CategoryAggregation;
 use App\Application\Aggregations\CategoryCoupling\CategoryCouplingAggregation;
+use App\Application\Dto\Category\CategoryDto;
 use App\Application\Dto\CategoryCoupling\CategoryCouplingDto;
 use App\Application\Repositories\BankRepository;
 use App\Application\Repositories\CategoryCouplingRepository;
 use App\Application\Repositories\CategoryRepository;
 use App\Domain\Bank\Entities\Bank;
 use App\Domain\Bank\Reports\ReportService;
+use App\Domain\Bank\Reports\TransactionListModifier;
 use App\Domain\Category\Entities\Category;
+use Faker\Factory;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +30,11 @@ use Illuminate\Support\Str;
  */
 class ImportCategoryCouplingsCommand extends Command
 {
+    /**
+     *
+     */
+    public const CREATE_CATEGORY = 'Stwórz kategorię';
+
     /**
      * @var string
      */
@@ -39,6 +48,10 @@ class ImportCategoryCouplingsCommand extends Command
      * @var Collection
      */
     protected Collection $categories;
+    /**
+     * @var CategoryRepository
+     */
+    protected CategoryRepository $categoryRepository;
 
     /**
      * @param BankRepository $bankRepository
@@ -50,13 +63,15 @@ class ImportCategoryCouplingsCommand extends Command
         CategoryRepository $categoryRepository,
         CategoryCouplingRepository $categoryCouplingRepository
     ): void {
+        $this->categoryRepository = $categoryRepository;
+
         /**
          * @var Collection $banks ;
          */
         $banks = $bankRepository->all();
 
         $bankChoice = $this->choice('Bank?', $banks->pluck('name')->toArray());
-        $fileLocation = $this->ask('File?', storage_path('app/banks/mbank.json'));
+        $fileLocation = $this->ask('File?', storage_path('app/banks/mbank3.csv'));
         /**
          * @var Bank $bank
          */
@@ -73,16 +88,17 @@ class ImportCategoryCouplingsCommand extends Command
         }
 
         $reportService = new ReportService($strategy);
-        $couplings = $reportService->getCategories(
+        $transactions = TransactionListModifier::getExpenses($reportService->getTransactions(
             $reportService->decode(File::get($fileLocation), File::extension($fileLocation))
-        );
+        ));
+        $couplings = $reportService->getCategories($transactions);
 
         if (count($couplings) === 0) {
             $this->warn('Categories not found!');
             return;
         }
 
-        $this->categories = $categoryRepository->all();
+        $this->categories = $this->categoryRepository->all();
 
         $this->handleCouplings($couplings, $categoryCouplingRepository);
 
@@ -120,11 +136,15 @@ class ImportCategoryCouplingsCommand extends Command
          * @var Category $category
          */
         if (!$category = $this->categories->where('name', $coupling)->first()) {
+            $options = $this->categories->pluck('name');
+            $options->push(self::CREATE_CATEGORY);
+
             $categoryChoice = $this->choice(
                 sprintf('"%s" to couple with:', $coupling),
-                $this->categories->pluck('name')->toArray()
+                $options->toArray()
             );
-            $category = $this->categories->where('name', $categoryChoice)->first();
+
+            $category = $this->getCategory($categoryChoice, $coupling);
         }
 
         $uuid = (string)Str::uuid();
@@ -135,5 +155,28 @@ class ImportCategoryCouplingsCommand extends Command
             ->persist();
 
         $this->info(sprintf('Assigned %s with %s', $coupling, $category->name));
+    }
+
+    /**
+     * @param string $name
+     * @param string $coupling
+     * @return Category|null
+     */
+    protected function getCategory(string $name, string $coupling): ?Category
+    {
+        if ($name === self::CREATE_CATEGORY) {
+            $faker = Factory::create(config('app.faker_locale'));
+
+            $uuid = (string)Str::uuid();
+            CategoryAggregation::retrieve($uuid)
+                ->create(
+                    new CategoryDto($uuid, $coupling, $faker->unique()->hexColor())
+                )
+                ->persist();
+
+            return $this->categoryRepository->find($uuid);
+        }
+
+        return $this->categories->where('name', $name)->first();
     }
 }

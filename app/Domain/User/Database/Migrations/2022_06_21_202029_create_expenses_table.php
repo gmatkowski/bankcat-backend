@@ -17,14 +17,19 @@ class CreateExpensesTable extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('category_id')->constrained('categories')->cascadeOnDelete();
+            $table->foreignUuid('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('bank_id')->nullable()->constrained('banks')->nullOnDelete();
+
             $table->string('name');
             $table->integer('amount');
+            $table->date('date_at')->index();
+            $table->json('data')->nullable();
             $table->timestamps();
 
             $table->index(['category_id']);
             $table->index(['user_id']);
+            $table->index(['bank_id']);
         });
     }
 

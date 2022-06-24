@@ -8,6 +8,7 @@
 namespace App\Domain\Bank\Reports\Strategies;
 
 use App\Domain\Bank\Reports\Contracts\ReportStrategyContract;
+use App\Domain\Bank\Reports\TransactionList;
 
 /**
  *
@@ -21,16 +22,38 @@ class IpkoStrategy implements ReportStrategyContract
      */
     public function decode(string $data, string $format): array
     {
-        return  [];
+        // TODO: Implement decode() method.
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAvailableDecoders(): array
+    {
+        return [
+            'csv',
+            'pdf',
+            'xls',
+            'xlsx',
+            'json'
+        ];
     }
 
     /**
      * @param array $data
-     * @return array
+     * @return TransactionList
      */
-    public function getCategories(array $data): array
+    public function getTransactions(array $data): TransactionList
     {
-        return [];
+        return new TransactionList();
     }
 
+    /**
+     * @param TransactionList $transactions
+     * @return array
+     */
+    public function getCategories(TransactionList $transactions): array
+    {
+        // TODO: Implement getCategories() method.
+    }
 }

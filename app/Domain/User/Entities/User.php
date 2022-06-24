@@ -3,13 +3,14 @@
 namespace App\Domain\User\Entities;
 
 use App\Domain\User\Database\Factories\UserFactory;
+use App\Domain\User\Notifications\VerifyUserEmail;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Kblais\Uuid\Uuid;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -18,6 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string last_name
  * @property string email
  * @property string password
+ * @property string|null verification_token
  * @property Carbon created_at
  * @property Carbon updated_at
  */
@@ -45,6 +47,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_token'
     ];
 
     /**
@@ -62,6 +65,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function setPasswordAttribute(string $value): void
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    /**
+     *
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyUserEmail());
     }
 
     /**

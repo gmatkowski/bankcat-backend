@@ -21,6 +21,7 @@ class CreateCategoryCouplingsTable extends Migration
             $table->string('name');
             $table->timestamps();
             $table->index(['category_id']);
+            $table->index(['name']);
         });
     }
 

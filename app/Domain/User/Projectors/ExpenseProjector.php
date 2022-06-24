@@ -9,6 +9,7 @@ namespace App\Domain\User\Projectors;
 
 use App\Application\Events\Expense\ExpenseCreated;
 use App\Domain\User\Entities\Expense;
+use Illuminate\Support\Str;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
 /**
@@ -24,10 +25,17 @@ class ExpenseProjector extends Projector
     {
         $expense = new Expense();
         $expense->id = $event->getDto()->getUuid();
-        $expense->name = $event->getDto()->getName();
+        $expense->name = Str::limit(Str::squish($event->getDto()->getName()), 64);
         $expense->amount = $event->getDto()->getAmount();
         $expense->user()->associate($event->getDto()->getUserId());
-        $expense->category()->associate($event->getDto()->getCategoryId());
+        $expense->bank()->associate($event->getDto()->getBankId());
+        $expense->date_at = $event->getDto()->getDateAt();
+        $expense->data = $event->getDto()->getData();
+
+        if ($categoryId = $event->getDto()->getCategoryId()) {
+            $expense->category()->associate($categoryId);
+        }
+
         $expense->save();
     }
 

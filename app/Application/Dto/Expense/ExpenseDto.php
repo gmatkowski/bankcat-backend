@@ -7,24 +7,31 @@
 
 namespace App\Application\Dto\Expense;
 
+use Carbon\Carbon;
+
 /**
  *
  */
 class ExpenseDto
 {
+    private ?array $data = null;
+    private ?string $categoryId = null;
+
     /**
      * @param string $uuid
      * @param string $name
      * @param int $amount
-     * @param string $user_id
-     * @param string $category_id
+     * @param string $userId
+     * @param string $bankId
+     * @param Carbon $date_at
      */
     public function __construct(
         private string $uuid,
         private string $name,
         private int $amount,
-        private string $user_id,
-        private string $category_id
+        private string $userId,
+        private string $bankId,
+        private Carbon $date_at
     ) {
 
     }
@@ -58,7 +65,7 @@ class ExpenseDto
      */
     public function getUserId(): string
     {
-        return $this->user_id;
+        return $this->userId;
     }
 
     /**
@@ -66,6 +73,46 @@ class ExpenseDto
      */
     public function getCategoryId(): string
     {
-        return $this->category_id;
+        return $this->categoryId;
+    }
+
+    /**
+     * @param string|null $categoryId
+     */
+    public function setCategoryId(?string $categoryId): void
+    {
+        $this->categoryId = $categoryId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBankId(): string
+    {
+        return $this->bankId;
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getDateAt(): Carbon
+    {
+        return $this->date_at;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getData(): ?array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array|null $data
+     */
+    public function setData(?array $data): void
+    {
+        $this->data = $data;
     }
 }

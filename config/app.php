@@ -55,6 +55,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'frontend_url' => env('APP_FRONTEND_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 
@@ -195,6 +196,7 @@ return [
         App\Application\Providers\EventServiceProvider::class,
         App\Application\Providers\RouteServiceProvider::class,
         App\Application\Providers\TelescopeServiceProvider::class,
+        App\Application\Providers\PasswordServiceProvider::class,
 
         App\Domain\User\Providers\DomainServiceProvider::class,
         App\Domain\Category\Providers\DomainServiceProvider::class,

@@ -20,6 +20,8 @@ class CreateCategoriesTable extends Migration
             $table->string('name');
             $table->string('color');
             $table->timestamps();
+
+            $table->index(['name']);
         });
     }
 
