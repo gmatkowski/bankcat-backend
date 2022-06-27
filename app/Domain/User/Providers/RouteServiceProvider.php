@@ -41,7 +41,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('auth')
             ->middleware(['api'])
-            ->namespace($this->namespace.'\Auth')
+            ->namespace($this->namespace . '\Auth')
             ->group($this->domainPath('Routes/auth.php'));
     }
 
@@ -52,7 +52,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('user')
             ->middleware(['api'])
-            ->namespace($this->namespace.'\User')
+            ->namespace($this->namespace . '\User')
             ->group($this->domainPath('Routes/user.php'));
     }
 
@@ -63,7 +63,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('expense')
             ->middleware(['api'])
-            ->namespace($this->namespace.'\Expense')
+            ->namespace($this->namespace . '\Expense')
             ->group($this->domainPath('Routes/expense.php'));
     }
 }

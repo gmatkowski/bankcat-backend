@@ -1,17 +1,25 @@
 <?php
+/**
+ * User: gmatk
+ * Date: 27.06.2022
+ * Time: 18:49
+ */
 
 namespace App\Domain\User\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Lang;
-use function url;
 
-class VerifyUserEmail extends Notification
+class NewPassword extends Notification
 {
     use Queueable;
+
+    public function __construct(private string $password)
+    {
+
+    }
 
     /**
      * Get the notification's delivery channels.
@@ -33,12 +41,8 @@ class VerifyUserEmail extends Notification
     public function toMail(mixed $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(Lang::get('Verify Email Address'))
-            ->line(Lang::get('Please click the button below to verify your email address.'))
-            ->action(
-                Lang::get('Verify Email Address'),
-                route('verification.verify', ['id' => $notifiable->getKey(), $notifiable->verification_token])
-            )
-            ->line(Lang::get('If you did not create an account, no further action is required.'));
+            ->line(Lang::get('Here is your new password, now You can log in'))
+            ->subject(Lang::get('New password'))
+            ->greeting($this->password);
     }
 }

@@ -42,7 +42,8 @@ class DomainServiceProvider extends BaseDomainServiceProvider
      * @var array|string[]
      */
     protected array $providers = [
-        RouteServiceProvider::class
+        RouteServiceProvider::class,
+        AuthServiceProvider::class
     ];
 
     /**

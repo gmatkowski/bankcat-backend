@@ -7,10 +7,12 @@
 
 namespace App\Domain\User\Reactors;
 
+use App\Application\Events\User\PasswordReseted;
 use App\Application\Events\User\UserCreated;
 use App\Application\Repositories\UserRepository;
 use App\Domain\User\Entities\Role;
 use App\Domain\User\Entities\User;
+use App\Domain\User\Notifications\NewPassword;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Spatie\EventSourcing\EventHandlers\Reactors\Reactor;
@@ -45,5 +47,20 @@ class UserReactor extends Reactor implements ShouldQueue
         }
 
         event(new Registered($user));
+    }
+
+    /**
+     * @param PasswordReseted $event
+     */
+    public function onPasswordResetedEvent(PasswordReseted $event): void
+    {
+        if (!($user = $this->repository->findByEmail($event->getEmail())) || !$user->hasVerifiedEmail()) {
+            return;
+        }
+
+        $user->notify(
+            new NewPassword($event->getPassword())
+        );
+
     }
 }

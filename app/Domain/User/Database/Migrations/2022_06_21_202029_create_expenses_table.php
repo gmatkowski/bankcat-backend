@@ -30,6 +30,8 @@ class CreateExpensesTable extends Migration
             $table->index(['category_id']);
             $table->index(['user_id']);
             $table->index(['bank_id']);
+            $table->index(['date_at', 'created_at']);
+            $table->index(['user_id', 'date_at', 'created_at']);
         });
     }
 
