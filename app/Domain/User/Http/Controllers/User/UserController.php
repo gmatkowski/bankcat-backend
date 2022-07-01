@@ -9,6 +9,7 @@ namespace App\Domain\User\Http\Controllers\User;
 
 use App\Application\Dto\User\UserUpdateDto;
 use App\Application\Events\User\UserUpdated;
+use App\Domain\User\Entities\User;
 use App\Domain\User\Http\Requests\UpdateRequest;
 use App\Domain\User\Http\Resources\UserResource;
 use App\Interfaces\Http\Controllers\Controller;
@@ -24,6 +25,9 @@ class UserController extends Controller
      */
     public function update(UpdateRequest $request): UserResource
     {
+        /**
+         * @var User $user
+         */
         $user = $request->user();
 
         $dto = new UserUpdateDto(
@@ -36,6 +40,6 @@ class UserController extends Controller
             new UserUpdated($dto)
         );
 
-        return new UserResource($user);
+        return new UserResource($user->fresh());
     }
 }

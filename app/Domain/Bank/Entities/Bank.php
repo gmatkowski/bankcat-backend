@@ -16,6 +16,7 @@ use App\Domain\Bank\Reports\ReportService;
  * @property string id
  * @property string name
  * @property string logo
+ * @property boolean active
  */
 class Bank extends Model implements Transformable
 {
@@ -28,7 +29,15 @@ class Bank extends Model implements Transformable
      */
     protected $fillable = [
         'name',
-        'logo'
+        'logo',
+        'active'
+    ];
+
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'active' => 'boolean'
     ];
 
     /**

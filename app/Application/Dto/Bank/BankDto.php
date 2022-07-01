@@ -16,6 +16,10 @@ class BankDto
      * @var string|null
      */
     private ?string $logo = null;
+    /**
+     * @var bool
+     */
+    private bool $active = true;
 
     /**
      * @param string $uuid
@@ -56,5 +60,21 @@ class BankDto
     public function setLogo(?string $logo): void
     {
         $this->logo = $logo;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param bool $active
+     */
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
     }
 }

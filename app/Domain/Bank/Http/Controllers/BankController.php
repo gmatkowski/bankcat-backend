@@ -22,6 +22,6 @@ class BankController extends Controller
      */
     public function available(BankRepository $repository): BankCollection
     {
-        return new BankCollection($repository->all());
+        return new BankCollection($repository->active());
     }
 }

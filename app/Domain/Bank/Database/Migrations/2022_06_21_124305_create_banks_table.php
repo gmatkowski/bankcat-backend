@@ -19,6 +19,7 @@ class CreateBanksTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('logo')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

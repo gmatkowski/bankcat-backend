@@ -3,6 +3,7 @@
 namespace App\Application\Repositories;
 
 use App\Infrastructure\Interfaces\RepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Interface BankRepository.
@@ -11,5 +12,8 @@ use App\Infrastructure\Interfaces\RepositoryInterface;
  */
 interface BankRepository extends RepositoryInterface
 {
-    //
+    /**
+     * @return Collection
+     */
+    public function active(): Collection;
 }

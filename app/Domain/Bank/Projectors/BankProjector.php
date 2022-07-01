@@ -25,6 +25,7 @@ class BankProjector extends Projector
         $bank->id = $event->getDto()->getUuid();
         $bank->name = $event->getDto()->getName();
         $bank->logo = $event->getDto()->getLogo();
+        $bank->active = $event->getDto()->isActive();
         $bank->save();
     }
 }

@@ -65,13 +65,10 @@ class ImportCategoryCouplingsCommand extends Command
     ): void {
         $this->categoryRepository = $categoryRepository;
 
-        /**
-         * @var Collection $banks ;
-         */
-        $banks = $bankRepository->all();
+        $banks = $bankRepository->active();
 
         $bankChoice = $this->choice('Bank?', $banks->pluck('name')->toArray());
-        $fileLocation = $this->ask('File?', storage_path('app/banks/mbank3.csv'));
+        $fileLocation = $this->ask('File?', storage_path('app/banks/mbank2.csv'));
         /**
          * @var Bank $bank
          */
@@ -98,8 +95,6 @@ class ImportCategoryCouplingsCommand extends Command
             return;
         }
 
-        $this->categories = $this->categoryRepository->all();
-
         $this->handleCouplings($couplings, $categoryCouplingRepository);
 
         $this->info('Category couplings assigned');
@@ -115,6 +110,7 @@ class ImportCategoryCouplingsCommand extends Command
     ): void {
         DB::transaction(function () use ($couplings, $categoryCouplingRepository) {
             foreach ($couplings as $coupling) {
+                $this->categories = $this->categoryRepository->all();
                 $this->handleCoupling($coupling, $categoryCouplingRepository);
             }
         });

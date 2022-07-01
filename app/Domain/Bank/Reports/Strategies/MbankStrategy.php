@@ -32,6 +32,14 @@ class MbankStrategy implements ReportStrategyContract
     ];
 
     /**
+     * @var array|string[]
+     */
+    protected array $ignore = [
+        'Przelew własny',
+        'Księgowanie VAT'
+    ];
+
+    /**
      * @param string $data
      * @param string $format
      * @return array
@@ -56,6 +64,14 @@ class MbankStrategy implements ReportStrategyContract
     public function getAvailableDecoders(): array
     {
         return array_keys($this->decoders);
+    }
+
+    /**
+     * @return array
+     */
+    public function getIgnored(): array
+    {
+        return $this->ignore;
     }
 
     /**
@@ -93,6 +109,9 @@ class MbankStrategy implements ReportStrategyContract
 
         $dto = new TransactionList();
         foreach ($transactions as $transaction) {
+            if (in_array($transaction['category'], $this->getIgnored(), true)) {
+                continue;
+            }
             $dto->addTransaction(new TransactionDto(
                 $transaction['description'],
                 ReportService::parseAmount($transaction['amount']),

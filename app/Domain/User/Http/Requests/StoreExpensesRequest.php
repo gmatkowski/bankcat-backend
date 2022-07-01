@@ -26,6 +26,7 @@ class StoreExpensesRequest extends FormRequest
             'bank' => [
                 'required',
                 Rule::exists(Bank::class, 'id')
+                    ->where('active', true)
             ],
             'file' => [
                 'required',

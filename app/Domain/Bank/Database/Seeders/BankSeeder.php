@@ -16,8 +16,14 @@ use Illuminate\Support\Str;
 class BankSeeder extends Seeder
 {
     protected array $banks = [
-        'mBank',
-        'iPKO'
+        [
+            'name' => 'mBank',
+            'active' => true
+        ],
+        [
+            'name' => 'iPKO',
+            'active' => false
+        ],
     ];
 
     public function __construct(private BankRepository $repository)
@@ -34,10 +40,12 @@ class BankSeeder extends Seeder
         foreach ($this->banks as $bank) {
             $uuid = (string)Str::uuid();
 
+            $dto = new BankDto($uuid, $bank['name']);
+            $dto->setActive($bank['active']);
+
             BankAggregation::retrieve($uuid)
-                ->create(
-                    new BankDto($uuid, $bank)
-                )->persist();
+                ->create($dto)
+                ->persist();
         }
     }
 }

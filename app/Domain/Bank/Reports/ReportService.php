@@ -62,6 +62,14 @@ class ReportService implements ReportStrategyContract
     }
 
     /**
+     * @return array
+     */
+    public function getIgnored(): array
+    {
+        return $this->strategy->getIgnored();
+    }
+
+    /**
      * @param array $data
      * @return TransactionList
      */

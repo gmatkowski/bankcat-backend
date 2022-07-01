@@ -55,6 +55,27 @@ class CategorySeeder extends Seeder
         ],
         [
             'name' => 'Rachunki i opłaty'
+        ],
+        [
+            'name' => 'Wypłaty z bankomatu'
+        ],
+        [
+            'name' => 'Multimedia, książki i prasa'
+        ],
+        [
+            'name' => 'Odzież i obuwie'
+        ],
+        [
+            'name' => 'Prezenty i wsparcie'
+        ],
+        [
+            'name' => 'Zwierzęta'
+        ],
+        [
+            'name' => 'Alkohol'
+        ],
+        [
+            'name' => 'Wynagrodzenia'
         ]
     ];
 
@@ -71,21 +92,19 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        if ($this->repository->count() > 0) {
-            return;
-        }
-
         $faker = Factory::create(config('app.faker_locale'));
 
         foreach ($this->categories as $category) {
-            $uuid = (string)Str::uuid();
-            CategoryAggregation::retrieve($uuid)->create(
-                new CategoryDto(
-                    $uuid,
-                    $category['name'],
-                    $category['color'] ?? $faker->unique()->hexColor()
-                )
-            )->persist();
+            if (!$this->repository->findByName($category['name'])) {
+                $uuid = (string)Str::uuid();
+                CategoryAggregation::retrieve($uuid)->create(
+                    new CategoryDto(
+                        $uuid,
+                        $category['name'],
+                        $category['color'] ?? $faker->unique()->hexColor()
+                    )
+                )->persist();
+            }
         }
 
     }

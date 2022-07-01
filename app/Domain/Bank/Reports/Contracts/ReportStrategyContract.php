@@ -27,6 +27,11 @@ interface ReportStrategyContract
     public function getAvailableDecoders(): array;
 
     /**
+     * @return array
+     */
+    public function getIgnored(): array;
+
+    /**
      * @param array $data
      * @return TransactionList
      */

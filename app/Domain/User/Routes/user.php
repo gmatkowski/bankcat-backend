@@ -9,5 +9,5 @@ Route::group(['middleware' => ['auth:api']], function (Router $route) {
         ->name('user.update');
 
     $route->post('password', [PasswordController::class, 'change'])
-        ->name('user.update');
+        ->name('user.password');
 });
