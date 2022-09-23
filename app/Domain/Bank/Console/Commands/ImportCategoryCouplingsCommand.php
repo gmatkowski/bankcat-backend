@@ -68,7 +68,7 @@ class ImportCategoryCouplingsCommand extends Command
         $banks = $bankRepository->active();
 
         $bankChoice = $this->choice('Bank?', $banks->pluck('name')->toArray());
-        $fileLocation = $this->ask('File?', storage_path('app/banks/mbank2.csv'));
+        $fileLocation = $this->ask('File?', storage_path('app/banks/mbank3.csv'));
         /**
          * @var Bank $bank
          */
